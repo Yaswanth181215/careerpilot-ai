@@ -7,7 +7,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "clean": "rimraf dist",
     "build": "npm run clean",
-    "start": "node dist/server.js",
+"start": "npx ts-node src/server.ts",
     "test": "echo \"No tests specified yet\""
   },
   "dependencies": {
