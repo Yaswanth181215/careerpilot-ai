@@ -5,9 +5,22 @@ import { connectDB } from './config/db';
 import { logger, AppEventBus } from '@careerpilot/shared';
 import dotenv from 'dotenv';
 
+console.log("SERVER FILE STARTED");
+
+process.on("uncaughtException", (err) => {
+  console.error("UNCAUGHT:", err);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.error("UNHANDLED:", err);
+});
+
 dotenv.config();
+
+console.log("CWD =", process.cwd());
 console.log("PORT =", process.env.PORT);
-console.log("MONGO_URI EXISTS =", !!process.env.MONGO_URI);console.log("CWD =", process.cwd());
+console.log("MONGO_URI EXISTS =", !!process.env.MONGO_URI);
+
 const PORT = process.env.PORT || 5000;
 
 // Create HTTP server wrapping Express
@@ -54,8 +67,14 @@ AppEventBus.on('EVENT_DLQ_ALERT', (dlqPayload) => {
 
 // Start Database & Web server
 const startServer = async () => {
+  console.log("ABOUT TO CONNECT DB");
+
   await connectDB();
+
+  console.log("ABOUT TO START SERVER");
+
   server.listen(PORT, () => {
+    console.log("SERVER LISTENING");
     logger.info(`[Server] Core API service is listening on port ${PORT}`);
   });
 };
