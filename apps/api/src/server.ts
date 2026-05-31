@@ -5,8 +5,9 @@ import { connectDB } from './config/db';
 import { logger, AppEventBus } from '@careerpilot/shared';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: '../../.env' });
-console.log("CWD =", process.cwd());
+dotenv.config();
+console.log("PORT =", process.env.PORT);
+console.log("MONGO_URI EXISTS =", !!process.env.MONGO_URI);console.log("CWD =", process.cwd());
 const PORT = process.env.PORT || 5000;
 
 // Create HTTP server wrapping Express
@@ -67,5 +68,11 @@ process.on('SIGTERM', () => {
     process.exit(0);
   });
 });
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err);
+});
 
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED REJECTION:', err);
+});
 startServer();
