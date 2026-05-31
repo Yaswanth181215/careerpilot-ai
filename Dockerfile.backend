@@ -1,0 +1,32 @@
+# Dockerfile.backend
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copy root configurations
+COPY package.json tsconfig.json ./
+COPY packages/types/ packages/types/
+COPY packages/shared/ packages/shared/
+COPY apps/api/ apps/api/
+
+# Build types & shared workspace modules
+RUN npm install
+RUN npm run build --workspace=@careerpilot/types
+RUN npm run build --workspace=@careerpilot/shared
+RUN npm run build --workspace=@careerpilot/api
+
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules/ ./node_modules/
+COPY --from=builder /app/packages/ ./packages/
+COPY --from=builder /app/apps/api/dist/ ./apps/api/dist/
+COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
+
+EXPOSE 5000
+
+ENV NODE_ENV=production
+
+CMD ["npm", "run", "start", "--workspace=@careerpilot/api"]

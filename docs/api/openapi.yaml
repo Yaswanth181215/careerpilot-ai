@@ -1,0 +1,292 @@
+openapi: 3.0.3
+info:
+  title: CareerPilot AI Enterprise API
+  description: API Gateway contracts for the CareerPilot AI SaaS ecosystem.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api
+    description: Local Development API Server
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+                - role
+              properties:
+                name:
+                  type: string
+                  example: Jane Doe
+                email:
+                  type: string
+                  format: email
+                  example: jane.doe@example.com
+                password:
+                  type: string
+                  minLength: 8
+                  example: P@ssword123!
+                role:
+                  type: string
+                  enum: [Student, Mentor, Admin, Super Admin]
+                  example: Student
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: User registered successfully. Please verify your email.
+        '400':
+          description: Validation or parameter errors
+
+  /auth/login:
+    post:
+      summary: Authenticate user & return session tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: jane@example.com
+                password:
+                  type: string
+                  example: P@ssword123!
+      responses:
+        '200':
+          description: Login successful
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                description: HTTP-Only cookie containing the access and refresh tokens.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+  /auth/refresh:
+    post:
+      summary: Rotate and refresh session keys
+      responses:
+        '200':
+          description: Access token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        '401':
+          description: Stale or invalid refresh token
+
+  /interviews/start:
+    post:
+      summary: Create dynamically generated mock interview
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - domain
+                - difficulty
+                - experienceLevel
+              properties:
+                domain:
+                  type: string
+                  enum: [DSA, DBMS, System Design, React, Node.js]
+                  example: System Design
+                difficulty:
+                  type: string
+                  enum: [Easy, Medium, Hard]
+                  example: Medium
+                experienceLevel:
+                  type: string
+                  enum: [Fresher, Intermediate, Advanced]
+                  example: Intermediate
+      responses:
+        '201':
+          description: Interview session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  interviewId:
+                    type: string
+                  questions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        questionId:
+                          type: string
+                        questionText:
+                          type: string
+
+  /resumes/analyze:
+    post:
+      summary: Upload & evaluate a PDF Resume
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                resume:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Resume analysis completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  atsScore:
+                    type: number
+                    example: 85
+                  skills:
+                    type: array
+                    items:
+                      type: string
+                  strengths:
+                    type: array
+                    items:
+                      type: string
+                  weaknesses:
+                    type: array
+                    items:
+                      type: string
+                  suggestions:
+                    type: array
+                    items:
+                      type: string
+
+  /coding/submit:
+    post:
+      summary: Evaluate code execution on private test cases
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - language
+                - code
+                - problemId
+              properties:
+                language:
+                  type: string
+                  enum: [python, java, cpp, javascript]
+                  example: javascript
+                code:
+                  type: string
+                  example: "function sum(a,b) { return a + b; }"
+                problemId:
+                  type: string
+                  example: "sum-two-numbers"
+      responses:
+        '200':
+          description: Execution complete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  runtime:
+                    type: number
+                  memory:
+                    type: number
+                  passed:
+                    type: boolean
+                  results:
+                    type: array
+                    items:
+                      type: object
+
+  /health:
+    get:
+      summary: Shallow health check
+      responses:
+        '200':
+          description: Server is operational
+
+  /status:
+    get:
+      summary: Deep infrastructure health report (DB, Redis, API, AI Services)
+      responses:
+        '200':
+          description: Complete health status report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api:
+                    type: string
+                    example: healthy
+                  database:
+                    type: string
+                    example: healthy
+                  aiService:
+                    type: string
+                    example: healthy
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
