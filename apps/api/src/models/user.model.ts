@@ -37,10 +37,7 @@ UserSchema.index({ isDeleted: 1, xp: -1, level: -1 });
 
 // Soft delete query middlewares
 UserSchema.pre(/^find/, function (next) {
-  const query = this.getQuery();
-  if (query.isDeleted === undefined) {
-    this.where({ isDeleted: false });
-  }
+  (this as any).find({ isDeleted: false });
   next();
 });
 
