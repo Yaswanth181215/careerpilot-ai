@@ -3,7 +3,7 @@ import { ICodingSubmission } from '@careerpilot/types';
 
 export interface ICodingSubmissionDocument extends Document, Omit<ICodingSubmission, '_id'> {}
 
-const CodingSubmissionSchema = new Schema<ICodingSubmissionDocument>(
+const CodingSubmissionSchema = new Schema<any>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     problemId: { type: String, required: true, index: true },

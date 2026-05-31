@@ -3,7 +3,7 @@ import { ILearningRoadmap } from '@careerpilot/types';
 
 export interface IRoadmapDocument extends Document, Omit<ILearningRoadmap, '_id'> {}
 
-const RoadmapSchema = new Schema<IRoadmapDocument>(
+const RoadmapSchema = new Schema<any>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     title: { type: String, required: true },

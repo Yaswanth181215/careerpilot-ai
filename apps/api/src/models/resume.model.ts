@@ -5,7 +5,7 @@ export interface IResumeDocument extends Document, Omit<IResume, '_id'> {
   isDeleted: boolean;
 }
 
-const ResumeSchema = new Schema<IResumeDocument>(
+const ResumeSchema = new Schema<any>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     fileName: { type: String, required: true },
@@ -38,7 +38,7 @@ const ResumeSchema = new Schema<IResumeDocument>(
 );
 
 ResumeSchema.pre(/^find/, function (next) {
-  this.where({ isDeleted: false });
+  (this as any).find({ isDeleted: false });
   next();
 });
 

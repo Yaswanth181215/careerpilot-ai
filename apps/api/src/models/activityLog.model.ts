@@ -3,7 +3,7 @@ import { IAuditLog } from '@careerpilot/types';
 
 export interface IActivityLogDocument extends Document, Omit<IAuditLog, '_id'> {}
 
-const ActivityLogSchema = new Schema<IActivityLogDocument>(
+const ActivityLogSchema = new Schema<any>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
     action: { type: String, required: true, index: true },

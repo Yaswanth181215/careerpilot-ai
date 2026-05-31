@@ -20,9 +20,8 @@ const MentorSchema = new Schema<IMentorDocument>(
 );
 
 MentorSchema.pre(/^find/, function (next) {
-  this.where({ isDeleted: false });
+  (this as any).find({ isDeleted: false });
   next();
 });
-
 export const Mentor = model<IMentorDocument>('Mentor', MentorSchema);
 export default Mentor;

@@ -3,7 +3,7 @@ import { IReport } from '@careerpilot/types';
 
 export interface IReportDocument extends Document, Omit<IReport, '_id'> {}
 
-const ReportSchema = new Schema<IReportDocument>(
+const ReportSchema = new Schema<any>(
   {
     interviewId: { type: Schema.Types.ObjectId, ref: 'Interview', required: true, unique: true },
     overallScore: { type: Number, required: true },

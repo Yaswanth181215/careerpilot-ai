@@ -3,7 +3,7 @@ import { IJobRecommendation } from '@careerpilot/types';
 
 export interface IJobRecommendationDocument extends Document, Omit<IJobRecommendation, '_id'> {}
 
-const JobRecommendationSchema = new Schema<IJobRecommendationDocument>(
+const JobRecommendationSchema = new Schema<any>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     jobTitle: { type: String, required: true },

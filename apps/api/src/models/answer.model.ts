@@ -3,7 +3,7 @@ import { IAnswer } from '@careerpilot/types';
 
 export interface IAnswerDocument extends Document, Omit<IAnswer, '_id'> {}
 
-const AnswerSchema = new Schema<IAnswerDocument>(
+const AnswerSchema = new Schema<any>(
   {
     interviewId: { type: Schema.Types.ObjectId, ref: 'Interview', required: true, index: true },
     questionId: { type: Schema.Types.ObjectId, ref: 'Question', required: true, index: true },
